@@ -9,7 +9,7 @@ function hitGlitch() {
 		'contentType': 'application/json; charset=utf-8',
 		'method': 'post',
 		'payload': {
-			'type': ''
+			'type': 'wake'
 		},
 		'muteHttpExceptions': true
 	})

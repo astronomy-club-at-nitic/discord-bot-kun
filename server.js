@@ -6,8 +6,10 @@ const client = new Client({
         Intents.FLAGS.GUILDS,
         Intents.FLAGS.GUILD_MESSAGES,
         Intents.FLAGS.GUILD_VOICE_STATES,
+        Intents.FLAGS.GUILD_MESSAGE_REACTIONS
     ],
 });
+let tmpmsg = ""
 
 http.createServer(function(req, res){
   if (req.method == 'POST'){
@@ -28,13 +30,9 @@ http.createServer(function(req, res){
         return;
       }
       if (dataObject.type == "event") {
-        let d = new Date();
-        d.setDate(d.getDate() + 2);
-        let a = ["日", "月", "火", "水", "木", "金", "土"];
-        let msg = `${d.getMonth()}月${d.getDate()}日(${a[d.getDay()]})の部活動に......
-    :raised_hand: 参加します！
-    :wave: 参加しません……`;
-        client.channels.cache.get(process.env.CHANNEL_ID).send(msg);
+        if (dataObject.type == "event") {
+          usualactivity();
+        }
       }
       res.end();
     });
@@ -57,5 +55,24 @@ client.on('messageCreate', message => {
   }
 })
 
+
+client.on('messageReactionAdd', (reaction, user) => {
+  if (reaction.message.id == tmpmsg && user.id != client.user.id) {
+    reaction.message.channel.send(`ID:${user.id}\nemoji:${reaction.emoji.name}`);
+  }
+});
+
+let usualactivity =()=> {
+  let d = new Date();
+  d.setDate(d.getDate() + 2);
+  let a = ["日", "月", "火", "水", "木", "金", "土"];
+  let msg = `${d.getMonth()}月${d.getDate()}日(${a[d.getDay()]})の部活動に......
+    :raised_hand: 参加します！
+    :wave: 参加しません……`;
+  client.channels.cache.get(process.env.CHANNEL_ID).send(msg)
+    .then(message => {
+      tmpmsg = message.id;
+    })
+}
 
 client.login( process.env.BOT_TOKEN );
